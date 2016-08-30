@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.android.gms.nearby.messages.samples.nearbydevices">
+    package="nearbydemo">
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,7 @@
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="ADD KEY HERE (see README.md)" />
+            android:value="AIzaSyBWyIuM91ooCgWx77FLhsDg-WcXjMLz7FA" />
 
         <activity android:name=".MainActivity">
             <intent-filter>

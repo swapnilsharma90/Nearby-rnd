@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.google.android.gms.nearby.messages.samples.nearbydevices.MainActivity">
+    tools:context="nearbydemo.MainActivity">
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/subscribe_switch"
@@ -24,10 +24,32 @@
         android:layout_height="wrap_content"
         android:text="@string/share_device_information" />
 
+
+    <ImageButton
+        android:id="@+id/draggable_view"
+        android:background="@mipmap/ic_launcher"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
     <ListView
         android:id="@+id/nearby_devices_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:transcriptMode="alwaysScroll" />
+
+
+
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="140dp"
+        android:id="@+id/animView"
+        android:src="@drawable/common_plus_signin_btn_text_dark_normal"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

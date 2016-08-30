@@ -1,4 +1,4 @@
-package com.google.android.gms.nearby.messages.samples.nearbydevices;
+package nearbydemo;
 import android.os.Build;
 
 import com.google.android.gms.nearby.messages.Message;
@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 
 /**
  * Used to prepare the payload for a
- * {@link com.google.android.gms.nearby.messages.Message Nearby Message}. Adds a unique id
+ * {@link Message Nearby Message}. Adds a unique id
  * to the Message payload, which helps Nearby distinguish between multiple devices with
  * the same model name.
  */

@@ -1,4 +1,4 @@
-package com.google.android.gms.nearby.messages.samples.nearbydevices;
+package nearbydemo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,12 +10,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
-
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,7 +37,6 @@ import com.google.android.gms.nearby.messages.SubscribeOptions;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.UUID;
 
 /**
@@ -58,7 +61,7 @@ import java.util.UUID;
  * using a {@link Strategy}. When the TTL is reached, a publication or subscription expires.
  */
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, View.OnTouchListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -66,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     // Key used in writing to and reading from SharedPreferences.
     private static final String KEY_UUID = "key_uuid";
+
+    float dX;
+    float dY;
+    int lastAction;
+    ImageView animView;
 
     /**
      * Sets the time in seconds for a published message or a subscription to live. Set to three
@@ -107,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     private MessageListener mMessageListener;
 
+    View dragView;
+
     /**
      * Adapter for working with messages from nearby publishers.
      */
@@ -120,6 +130,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mSubscribeSwitch = (SwitchCompat) findViewById(R.id.subscribe_switch);
         mPublishSwitch = (SwitchCompat) findViewById(R.id.publish_switch);
 
+        animView = (ImageView) findViewById(R.id.animView);
+        animView.setVisibility(View.INVISIBLE);
+
+
+        dragView = findViewById(R.id.draggable_view);
+
+        dragView.setOnTouchListener(this);
+
+
+
+
+
+        dragView.setVisibility(View.INVISIBLE);
+
+
+        dragView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int x = dragView.getRight() - dragView.getLeft();
+                int y = dragView.getBottom() - dragView.getTop();
+                final TranslateAnimation translate = new TranslateAnimation(
+                        Animation.ABSOLUTE, 0, Animation.ABSOLUTE,
+                        x, Animation.ABSOLUTE, y,
+                        Animation.ABSOLUTE, 1000);
+
+                translate.setDuration(450);//speed of the animation
+                translate.setFillEnabled(true);
+                translate.setFillAfter(true);
+                dragView.startAnimation(translate);
+
+
+            }
+        });
         // Build the message that is going to be published. This contains the device name and a
         // UUID.
         mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
@@ -129,8 +173,37 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onFound(final Message message) {
                 // Called when a new message is found.
+
+
                 mNearbyDevicesArrayAdapter.add(
                         DeviceMessage.fromNearbyMessage(message).getMessageBody());
+
+
+                System.out.println("....xx.." + DeviceMessage.fromNearbyMessage(message).getMessageBody());
+
+
+                if (DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("Moto")||(DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("XT"))) {
+                    dragView.setVisibility(View.VISIBLE);
+
+
+//                    Toast.makeText(MainActivity.this, "....", Toast.LENGTH_SHORT).show();
+                //    animView.setVisibility(View.VISIBLE);
+
+
+                    int x = 80;
+                    int y = dragView.getBottom() - dragView.getTop();
+                    final TranslateAnimation translate = new TranslateAnimation(
+                            Animation.ABSOLUTE, x, Animation.ABSOLUTE,
+                            500, Animation.ABSOLUTE, 0,
+                            Animation.ABSOLUTE, 0);
+
+                    translate.setDuration(650);//speed of the animation
+                    translate.setFillEnabled(true);
+                    translate.setFillAfter(true);
+                    dragView.startAnimation(translate);
+
+                }
+
             }
 
             @Override
@@ -163,6 +236,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 // If GoogleApiClient is connected, perform pub actions in response to user action.
                 // If it isn't connected, do nothing, and perform pub actions when it connects (see
                 // onConnected()).
+
+                dragView.setVisibility(View.VISIBLE);
+
                 if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
                     if (isChecked) {
                         publish();
@@ -180,9 +256,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         final ListView nearbyDevicesListView = (ListView) findViewById(
                 R.id.nearby_devices_list_view);
         if (nearbyDevicesListView != null) {
+
             nearbyDevicesListView.setAdapter(mNearbyDevicesArrayAdapter);
+            System.out.println("....xx.." + nearbyDevicesArrayList);
+            if (nearbyDevicesArrayList.size() > 0) {
+                System.out.println("...." + nearbyDevicesArrayList);
+            }
+
         }
         buildGoogleApiClient();
+
+
     }
 
     /**
@@ -261,6 +345,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
                             Log.i(TAG, "Subscribed successfully.");
+
+
                         } else {
                             logAndShowSnackbar("Could not subscribe, status = " + status);
                             mSubscribeSwitch.setChecked(false);
@@ -332,5 +418,45 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (container != null) {
             Snackbar.make(container, text, Snackbar.LENGTH_LONG).show();
         }
+    }
+
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                dX = view.getX() - event.getRawX();
+                dY = view.getY() - event.getRawY();
+                lastAction = MotionEvent.ACTION_DOWN;
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                view.setY(event.getRawY() + dY);
+                view.setX(event.getRawX() + dX);
+                lastAction = MotionEvent.ACTION_MOVE;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                if (lastAction == MotionEvent.ACTION_DOWN)
+                    Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+
+                int x = 100;
+                int y = dragView.getBottom() - dragView.getTop();
+                final TranslateAnimation translate = new TranslateAnimation(
+                        Animation.ABSOLUTE, x, Animation.ABSOLUTE,
+                        700, Animation.ABSOLUTE, 0,
+                        Animation.ABSOLUTE, 0);
+
+                translate.setDuration(650);//speed of the animation
+                translate.setFillEnabled(true);
+                translate.setFillAfter(true);
+                dragView.startAnimation(translate);
+
+                break;
+
+            default:
+                return false;
+        }
+        return true;
     }
 }
