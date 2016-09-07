@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 translate.setDuration(450);//speed of the animation
                 translate.setFillEnabled(true);
                 translate.setFillAfter(true);
+
                 dragView.startAnimation(translate);
             }
         });
@@ -168,20 +169,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
 
-                if (messageEt.getText().toString()!=null && !messageEt.getText().toString().isEmpty())
+                if (messageEt.getText().toString() != null && !messageEt.getText().toString().isEmpty())
 
                 {
                     mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
-                            getApplicationContext().getPackageName(), Context.MODE_PRIVATE)),messageEt.getText().toString() );
-
-                }
-                else {
+                            getApplicationContext().getPackageName(), Context.MODE_PRIVATE)), messageEt.getText().toString());
+                } else {
 
                     mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
-                            getApplicationContext().getPackageName(), Context.MODE_PRIVATE)),"msg error" );
+                            getApplicationContext().getPackageName(), Context.MODE_PRIVATE)), "msg error");
                 }
-
-
                 if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
                     publish();
                 } else {
@@ -189,15 +186,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         });
-
-
-
-
-
-
-
-
-
 
 
         mMessageListener = new MessageListener() {
@@ -270,11 +258,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
 
         final List<String> nearbyDevicesArrayList = new ArrayList<>();
+
+
+//        mNearbyDevicesArrayAdapter = new ArrayAdapter<>(this,
+//                android.R.layout.simple_list_item_1,
+//                nearbyDevicesArrayList);
+
+
         mNearbyDevicesArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
+                R.layout.chat_list_item,
                 nearbyDevicesArrayList);
+
         final ListView nearbyDevicesListView = (ListView) findViewById(
                 R.id.nearby_devices_list_view);
+
         if (nearbyDevicesListView != null) {
 
             nearbyDevicesListView.setAdapter(mNearbyDevicesArrayAdapter);
