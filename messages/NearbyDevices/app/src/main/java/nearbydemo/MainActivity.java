@@ -16,8 +16,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     float dX;
     float dY;
     int lastAction;
-    ImageView animView;
+//    ImageView animView;
 
     /**
      * Sets the time in seconds for a published message or a subscription to live. Set to three
@@ -105,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private SwitchCompat mPublishSwitch;
     private SwitchCompat mSubscribeSwitch;
 
+    private Button btnSend;
+
+
     /**
      * The {@link Message} object used to broadcast information about the device to nearby devices.
      */
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private MessageListener mMessageListener;
 
     View dragView;
+    private EditText messageEt;
 
     /**
      * Adapter for working with messages from nearby publishers.
@@ -126,84 +131,100 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mSubscribeSwitch = (SwitchCompat) findViewById(R.id.subscribe_switch);
         mPublishSwitch = (SwitchCompat) findViewById(R.id.publish_switch);
-
-        animView = (ImageView) findViewById(R.id.animView);
-        animView.setVisibility(View.INVISIBLE);
-
-
+//        animView = (ImageView) findViewById(R.id.animView);
+//        animView.setVisibility(View.INVISIBLE);
         dragView = findViewById(R.id.draggable_view);
-
         dragView.setOnTouchListener(this);
-
-
-
-
-
         dragView.setVisibility(View.INVISIBLE);
-
-
         dragView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 int x = dragView.getRight() - dragView.getLeft();
                 int y = dragView.getBottom() - dragView.getTop();
                 final TranslateAnimation translate = new TranslateAnimation(
                         Animation.ABSOLUTE, 0, Animation.ABSOLUTE,
                         x, Animation.ABSOLUTE, y,
                         Animation.ABSOLUTE, 1000);
-
                 translate.setDuration(450);//speed of the animation
                 translate.setFillEnabled(true);
                 translate.setFillAfter(true);
                 dragView.startAnimation(translate);
-
-
             }
         });
         // Build the message that is going to be published. This contains the device name and a
         // UUID.
-        mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
-                getApplicationContext().getPackageName(), Context.MODE_PRIVATE)));
+
+
+//        mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
+//                getApplicationContext().getPackageName(), Context.MODE_PRIVATE)));
+
+
+        messageEt = (EditText) findViewById(R.id.messageEt);
+
+        btnSend = (Button) findViewById(R.id.sendBtn);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (messageEt.getText().toString()!=null && !messageEt.getText().toString().isEmpty())
+
+                {
+                    mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
+                            getApplicationContext().getPackageName(), Context.MODE_PRIVATE)),messageEt.getText().toString() );
+
+                }
+                else {
+
+                    mPubMessage = DeviceMessage.newNearbyMessage(getUUID(getSharedPreferences(
+                            getApplicationContext().getPackageName(), Context.MODE_PRIVATE)),"msg error" );
+                }
+
+
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                    publish();
+                } else {
+                    unpublish();
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
 
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(final Message message) {
                 // Called when a new message is found.
-
-
                 mNearbyDevicesArrayAdapter.add(
                         DeviceMessage.fromNearbyMessage(message).getMessageBody());
 
-
                 System.out.println("....xx.." + DeviceMessage.fromNearbyMessage(message).getMessageBody());
+                if (DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("Moto") || (DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("XT"))) {
 
 
-                if (DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("Moto")||(DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("XT"))) {
                     dragView.setVisibility(View.VISIBLE);
-
-
 //                    Toast.makeText(MainActivity.this, "....", Toast.LENGTH_SHORT).show();
-                //    animView.setVisibility(View.VISIBLE);
-
-
+                    //    animView.setVisibility(View.VISIBLE);
                     int x = 80;
                     int y = dragView.getBottom() - dragView.getTop();
                     final TranslateAnimation translate = new TranslateAnimation(
                             Animation.ABSOLUTE, x, Animation.ABSOLUTE,
                             500, Animation.ABSOLUTE, 0,
                             Animation.ABSOLUTE, 0);
-
                     translate.setDuration(650);//speed of the animation
                     translate.setFillEnabled(true);
                     translate.setFillAfter(true);
                     dragView.startAnimation(translate);
-
                 }
-
             }
 
             @Override
@@ -213,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         DeviceMessage.fromNearbyMessage(message).getMessageBody());
             }
         };
-
         mSubscribeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -239,13 +259,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 dragView.setVisibility(View.VISIBLE);
 
-                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                    if (isChecked) {
-                        publish();
-                    } else {
-                        unpublish();
-                    }
-                }
+//                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+//                    if (isChecked) {
+//                        publish();
+//                    } else {
+//                        unpublish();
+//                    }
+//                }
             }
         });
 
@@ -308,6 +328,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         // when the activity is destroyed, foreground pubs/subs do not survive device rotation. Once
         // this activity is re-created and GoogleApiClient connects, we check the UI and pub/sub
         // again if necessary.
+
+
         if (mPublishSwitch.isChecked()) {
             publish();
         }
@@ -345,8 +367,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
                             Log.i(TAG, "Subscribed successfully.");
-
-
                         } else {
                             logAndShowSnackbar("Could not subscribe, status = " + status);
                             mSubscribeSwitch.setChecked(false);

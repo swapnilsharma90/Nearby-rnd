@@ -1,5 +1,4 @@
 package nearbydemo;
-import android.os.Build;
 
 import com.google.android.gms.nearby.messages.Message;
 import com.google.gson.Gson;
@@ -21,8 +20,8 @@ public class DeviceMessage {
     /**
      * Builds a new {@link Message} object using a unique identifier.
      */
-    public static Message newNearbyMessage(String instanceId) {
-        DeviceMessage deviceMessage = new DeviceMessage(instanceId);
+    public static Message newNearbyMessage(String instanceId,String chatMsg) {
+        DeviceMessage deviceMessage = new DeviceMessage(instanceId,chatMsg);
         return new Message(gson.toJson(deviceMessage).getBytes(Charset.forName("UTF-8")));
     }
 
@@ -37,9 +36,11 @@ public class DeviceMessage {
                 DeviceMessage.class);
     }
 
-    private DeviceMessage(String uuid) {
+    private DeviceMessage(String uuid,String chatMsg) {
         mUUID = uuid;
-        mMessageBody = Build.MODEL;
+//        mMessageBody = Build.MODEL;
+        mMessageBody = chatMsg;
+
         // TODO(developer): add other fields that must be included in the Nearby Message payload.
     }
 
