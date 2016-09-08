@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -128,7 +129,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         mSubscribeSwitch = (SwitchCompat) findViewById(R.id.subscribe_switch);
+
+
+        /**
+         * This method hides the soft keyboard
+         */
+        View viewWithFocus = getCurrentFocus();
+        if (viewWithFocus != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(viewWithFocus.getWindowToken(), 0);
+        }
+
+
+
+
+
+
+
+
+
         //  mPublishSwitch = (SwitchCompat) findViewById(R.id.publish_switch);
 
         // Build the message that is going to be published. This contains the device name and a
@@ -156,13 +179,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         });
-
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(final Message message) {
                 // Called when a new message is found.
                 mNearbyDevicesArrayAdapter.add(DeviceMessage.fromNearbyMessage(message).getMessageBody());
-
                 System.out.println("....xx.." + DeviceMessage.fromNearbyMessage(message).getMessageBody());
                 if (DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("Moto") || (DeviceMessage.fromNearbyMessage(message).getMessageBody().contains("XT"))) {
 
@@ -178,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //                    dragView.startAnimation(translate);
                 }
             }
-
             @Override
             public void onLost(final Message message) {
                 // Called when a message is no longer detectable nearby.
@@ -228,6 +248,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mNearbyDevicesArrayAdapter = new ArrayAdapter<>(this,
                 R.layout.chat_list_item,
                 nearbyDevicesArrayList);
+
+
+
         final ListView nearbyDevicesListView = (ListView) findViewById(
                 R.id.nearby_devices_list_view);
         if (nearbyDevicesListView != null) {
