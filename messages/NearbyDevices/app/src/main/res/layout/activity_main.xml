@@ -18,22 +18,12 @@
         android:layout_height="wrap_content"
         android:text="@string/discover_nearby_devices" />
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/publish_switch"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/share_device_information" />
-
-
-    <ImageButton
-        android:id="@+id/draggable_view"
-        android:background="@mipmap/ic_launcher"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<android.support.v7.widget.SwitchCompat-->
+        <!--android:id="@+id/publish_switch"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/share_device_information"-->
+        <!--android:visibility="gone" />-->
 
 
     <ListView
@@ -48,21 +38,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <EditText
-        android:layout_width="254dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/messageEt"
-        android:hint="Enter message" />
+        <EditText
+            android:id="@+id/messageEt"
+            android:layout_width="254dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter message" />
 
-    <Button
-        android:textColor="@android:color/white"
+        <Button
+            android:id="@+id/sendBtn"
 
-        android:background="@android:color/holo_orange_dark"
+            android:layout_width="80dp"
 
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/sendBtn" />
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_orange_dark"
+            android:text="Send"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </LinearLayout>

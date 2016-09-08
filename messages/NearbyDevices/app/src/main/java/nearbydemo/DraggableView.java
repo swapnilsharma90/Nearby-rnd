@@ -15,8 +15,8 @@ public class DraggableView extends AppCompatActivity implements View.OnTouchList
     super.onCreate(savedInstanceState);
 //    setContentView(R.layout.draggable_view);
 
-    final View dragView = findViewById(R.id.draggable_view);
-    dragView.setOnTouchListener(this);
+    //final View dragView = findViewById(R.id.draggable_view);
+    //dragView.setOnTouchListener(this);
   }
 
   @Override
